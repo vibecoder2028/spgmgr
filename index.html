@@ -1,0 +1,388 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SME AI Implementation ROI Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        .input-section, .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+        
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e3c72;
+            border-bottom: 2px solid #e8f2ff;
+            padding-bottom: 10px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .metric-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .metric-value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .roi-positive {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .roi-negative {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+        }
+        
+        .breakdown {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .breakdown-item:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        
+        .industry-presets {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .preset-btn {
+            padding: 8px 16px;
+            background: #e8f2ff;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .preset-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .industry-presets {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AI ROI Calculator</h1>
+            <p>Measure the impact of AI implementation on your SME business</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="input-section">
+                <h2 class="section-title">Business Input</h2>
+                
+                <div class="industry-presets">
+                    <button class="preset-btn" onclick="loadPreset('retail')">Retail</button>
+                    <button class="preset-btn" onclick="loadPreset('manufacturing')">Manufacturing</button>
+                    <button class="preset-btn" onclick="loadPreset('logistics')">Logistics</button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="industry">Industry</label>
+                    <select id="industry" onchange="calculateROI()">
+                        <option value="retail">Retail</option>
+                        <option value="manufacturing">Manufacturing</option>
+                        <option value="logistics">Logistics</option>
+                        <option value="hospitality">Hospitality</option>
+                        <option value="professional-services">Professional Services</option>
+                    </select>
+                </div>
+                
+                <div class="input-group">
+                    <label for="employees">Number of Employees</label>
+                    <input type="number" id="employees" value="25" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="avgSalary">Average Employee Salary (AUD/year)</label>
+                    <input type="number" id="avgSalary" value="65000" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="revenue">Annual Revenue (AUD)</label>
+                    <input type="number" id="revenue" value="2500000" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="implementationCost">AI Implementation Cost (AUD)</label>
+                    <input type="number" id="implementationCost" value="45000" onchange="calculateROI()">
+                </div>
+                
+                <div class="input-group">
+                    <label for="monthlyCost">Monthly AI Service Cost (AUD)</label>
+                    <input type="number" id="monthlyCost" value="3500" onchange="calculateROI()">
+                </div>
+            </div>
+            
+            <div class="results-section">
+                <h2 class="section-title">ROI Analysis</h2>
+                
+                <div class="metric-card roi-positive" id="roiCard">
+                    <div class="metric-value" id="roiValue">287%</div>
+                    <div class="metric-label">12-Month ROI</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="paybackValue">4.2</div>
+                    <div class="metric-label">Payback Period (Months)</div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="savingsValue">$128,400</div>
+                    <div class="metric-label">Annual Cost Savings</div>
+                </div>
+                
+                <div class="breakdown">
+                    <h3 style="margin-bottom: 15px; color: #1e3c72;">Cost-Benefit Breakdown</h3>
+                    <div class="breakdown-item">
+                        <span>Labor Efficiency Gains</span>
+                        <span id="laborSavings">$86,250</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Process Optimization</span>
+                        <span id="processSavings">$25,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Error Reduction</span>
+                        <span id="errorSavings">$17,150</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Implementation Cost</span>
+                        <span id="totalImplementation">-$45,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span>Annual Service Cost</span>
+                        <span id="totalService">-$42,000</span>
+                    </div>
+                    <div class="breakdown-item">
+                        <span><strong>Net Annual Benefit</strong></span>
+                        <span id="netBenefit"><strong>$86,400</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const industryMultipliers = {
+            retail: { labor: 0.15, process: 0.08, error: 0.05 },
+            manufacturing: { labor: 0.20, process: 0.12, error: 0.08 },
+            logistics: { labor: 0.18, process: 0.15, error: 0.06 },
+            hospitality: { labor: 0.12, process: 0.06, error: 0.04 },
+            'professional-services': { labor: 0.25, process: 0.10, error: 0.07 }
+        };
+
+        const industryPresets = {
+            retail: {
+                employees: 25,
+                avgSalary: 55000,
+                revenue: 2000000,
+                implementationCost: 35000,
+                monthlyCost: 2500
+            },
+            manufacturing: {
+                employees: 50,
+                avgSalary: 70000,
+                revenue: 8000000,
+                implementationCost: 75000,
+                monthlyCost: 5000
+            },
+            logistics: {
+                employees: 40,
+                avgSalary: 60000,
+                revenue: 5000000,
+                implementationCost: 55000,
+                monthlyCost: 4000
+            }
+        };
+
+        function loadPreset(industry) {
+            if (industryPresets[industry]) {
+                const preset = industryPresets[industry];
+                document.getElementById('industry').value = industry;
+                document.getElementById('employees').value = preset.employees;
+                document.getElementById('avgSalary').value = preset.avgSalary;
+                document.getElementById('revenue').value = preset.revenue;
+                document.getElementById('implementationCost').value = preset.implementationCost;
+                document.getElementById('monthlyCost').value = preset.monthlyCost;
+                calculateROI();
+            }
+        }
+
+        function calculateROI() {
+            const industry = document.getElementById('industry').value;
+            const employees = parseInt(document.getElementById('employees').value) || 0;
+            const avgSalary = parseInt(document.getElementById('avgSalary').value) || 0;
+            const revenue = parseInt(document.getElementById('revenue').value) || 0;
+            const implementationCost = parseInt(document.getElementById('implementationCost').value) || 0;
+            const monthlyCost = parseInt(document.getElementById('monthlyCost').value) || 0;
+
+            const multipliers = industryMultipliers[industry];
+            const totalLaborCost = employees * avgSalary;
+            
+            // Calculate savings
+            const laborSavings = totalLaborCost * multipliers.labor;
+            const processSavings = revenue * multipliers.process;
+            const errorSavings = revenue * multipliers.error;
+            
+            const totalSavings = laborSavings + processSavings + errorSavings;
+            const annualServiceCost = monthlyCost * 12;
+            const totalFirstYearCost = implementationCost + annualServiceCost;
+            
+            const netBenefit = totalSavings - annualServiceCost;
+            const roi = ((netBenefit - implementationCost) / implementationCost) * 100;
+            const paybackMonths = implementationCost / (netBenefit / 12);
+
+            // Update UI
+            document.getElementById('roiValue').textContent = roi.toFixed(0) + '%';
+            document.getElementById('paybackValue').textContent = paybackMonths.toFixed(1);
+            document.getElementById('savingsValue').textContent = '$' + totalSavings.toLocaleString();
+            
+            document.getElementById('laborSavings').textContent = '$' + laborSavings.toLocaleString();
+            document.getElementById('processSavings').textContent = '$' + processSavings.toLocaleString();
+            document.getElementById('errorSavings').textContent = '$' + errorSavings.toLocaleString();
+            document.getElementById('totalImplementation').textContent = '-$' + implementationCost.toLocaleString();
+            document.getElementById('totalService').textContent = '-$' + annualServiceCost.toLocaleString();
+            document.getElementById('netBenefit').textContent = '$' + netBenefit.toLocaleString();
+
+            // Update ROI card color
+            const roiCard = document.getElementById('roiCard');
+            if (roi > 0) {
+                roiCard.className = 'metric-card roi-positive';
+            } else {
+                roiCard.className = 'metric-card roi-negative';
+            }
+        }
+
+        // Initial calculation
+        calculateROI();
+    </script>
+</body>
+</html>
