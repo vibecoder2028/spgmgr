@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IDP Flow Diagram</title>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2rem;
+      background-color: #f4f4f4;
+    }
+    .mermaid {
+      background-color: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <h1>IDP Flow Diagram</h1>
+  <div class="mermaid">
+<!-- START OF DIAGRAM -->
+<pre>
+graph TD
+    %% User Interface Layer
+    A[Developer] --> B[IDP Portal/Backstage]
+    A --> C[CLI Tools]
+    A --> D[API Direct]
+    
+    %% Service Catalog & Templates
+    B --> E[Service Catalog]
+    E --> F[Golden Path Templates]
+    F --> G[Application Template]
+    F --> H[Database Template]
+    F --> I[Infrastructure Template]
+    
+    %% Request Processing
+    G --> J[Template Engine]
+    H --> J
+    I --> J
+    
+    J --> K[Parameter Validation]
+    K --> L[Policy Pre-Check]
+    L --> M{Policy Compliant?}
+    
+    M -->|No| N[Policy Violation Alert]
+    N --> O[Developer Feedback]
+    O --> B
+    
+    M -->|Yes| P[Request Queue]
+    
+    %% GitOps Workflow
+    P --> Q[Git Repository Creation/Update]
+    Q --> R[Pull Request Creation]
+    R --> S[Automated Code Review]
+    S --> T[Security Scanning]
+    T --> U[Infrastructure Validation]
+    
+    U --> V{All Checks Pass?}
+    V -->|No| W[Failure Notification]
+    W --> O
+    
+    V -->|Yes| X[PR Auto-Merge]
+    X --> Y[Git Webhook Trigger]
+    
+    %% Orchestration Layer
+    Y --> Z[ArgoCD Sync]
+    Z --> AA[Crossplane Controller]
+    Z --> BB[Kubernetes Controller]
+    
+    %% Multi-Cloud Provisioning
+    AA --> CC{Workload Placement Logic}
+    CC --> DD[AWS Resources]
+    CC --> EE[Azure Resources]  
+    CC --> FF[GCP Resources]
+    CC --> GG[VMware Resources]
+    CC --> HH[OpenStack Resources]
+    
+    %% Infrastructure Provisioning
+    DD --> II[VPC/Networking]
+    DD --> JJ[Compute Instances]
+    DD --> KK[Managed Databases]
+    DD --> LL[Load Balancers]
+    
+    EE --> MM[VNet/Networking]
+    EE --> NN[VM Scale Sets]
+    EE --> OO[Azure SQL]
+    EE --> PP[Application Gateway]
+    
+    %% Application Deployment
+    BB --> QQ[Kubernetes Namespace]
+    QQ --> RR[RBAC Configuration]
+    RR --> SS[Network Policies]
+    SS --> TT[Secret Management]
+    TT --> UU[ConfigMap Creation]
+    UU --> VV[Application Deployment]
+    
+    %% Security & Compliance
+    VV --> WW[OPA Policy Enforcement]
+    WW --> XX[Security Scanning]
+    XX --> YY[Compliance Validation]
+    YY --> ZZ{Security Gate Pass?}
+    
+    ZZ -->|No| AAA[Security Alert]
+    AAA --> BBB[Auto-Remediation]
+    BBB --> CCC[Rollback if Needed]
+    CCC --> DDD[Incident Creation]
+    
+    ZZ -->|Yes| EEE[Deployment Success]
+    
+    %% Monitoring & Observability
+    EEE --> FFF[Prometheus Metrics]
+    EEE --> GGG[Application Logs]
+    EEE --> HHH[Distributed Tracing]
+    
+    FFF --> III[Grafana Dashboards]
+    GGG --> JJJ[Log Aggregation]
+    HHH --> KKK[Jaeger UI]
+    
+    %% Self-Healing & Automation
+    III --> LLL[Alert Manager]
+    JJJ --> LLL
+    KKK --> LLL
+    
+    LLL --> MMM{Critical Alert?}
+    MMM -->|Yes| NNN[Automated Response]
+    MMM -->|No| OOO[Notification Only]
+    
+    NNN --> PPP[Scale Resources]
+    NNN --> QQQ[Restart Services]
+    NNN --> RRR[Failover Traffic]
+    NNN --> SSS[Create Incident]
+    
+    %% Continuous Improvement
+    PPP --> TTT[Action Success?]
+    QQQ --> TTT
+    RRR --> TTT
+    
+    TTT -->|No| UUU[Escalate to Human]
+    TTT -->|Yes| VVV[Update Runbooks]
+    
+    %% Feedback Loop
+    VVV --> WWW[Platform Analytics]
+    OOO --> WWW
+    UUU --> WWW
+    
+    WWW --> XXX[Usage Metrics]
+    XXX --> YYY[Performance Optimization]
+    YYY --> ZZZ[Template Updates]
+    ZZZ --> F
+    
+    %% Developer Experience Enhancement
+    EEE --> AAAA[Service Ready Notification]
+    AAAA --> BBBB[Auto-Generated Documentation]
+    BBBB --> CCCC[Access Credentials]
+    CCCC --> DDDD[Monitoring Dashboards]
+    DDDD --> EEEE[Developer Onboarding]
+    
+    %% Cost Optimization
+    WWW --> FFFF[Cost Analytics]
+    FFFF --> GGGG[Resource Right-sizing]
+    GGGG --> HHHH[Spot Instance Recommendations]
+    HHHH --> IIII[Reserved Capacity Planning]
+    
+    %% Styling - Soft, Eye-Friendly Colors
+    classDef userLayer fill:#f8fbff,stroke:#5e8cc7,stroke-width:1px
+    classDef platformLayer fill:#faf8ff,stroke:#8d7cc7,stroke-width:1px
+    classDef orchestrationLayer fill:#f8fff8,stroke:#6bb26b,stroke-width:1px
+    classDef cloudLayer fill:#fffcf7,stroke:#d1943a,stroke-width:1px
+    classDef securityLayer fill:#fffafa,stroke:#cc7a7a,stroke-width:1px
+    classDef monitoringLayer fill:#fbfff9,stroke:#8fad5f,stroke-width:1px
+    classDef automationLayer fill:#fef9fc,stroke:#b85d8f,stroke-width:1px
+    
+    class A,B,C,D userLayer
+    class E,F,G,H,I,J,K,L,M,N,O,P platformLayer
+    class Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC orchestrationLayer
+    class DD,EE,FF,GG,HH,II,JJ,KK,LL,MM,NN,OO,PP cloudLayer
+    class WW,XX,YY,ZZ,AAA,BBB,CCC,DDD securityLayer
+    class FFF,GGG,HHH,III,JJJ,KKK monitoringLayer
+    class LLL,MMM,NNN,OOO,PPP,QQQ,RRR,SSS,TTT,UUU,VVV automationLayer
+</pre>
+<!-- END OF DIAGRAM -->
+  </div>
+</body>
+</html>
